@@ -1,0 +1,55 @@
+{
+  "name": "@skytells/cli",
+  "version": "1.0.0",
+  "description": "Skytells CLI — manage services, deployments, and inference from your terminal",
+  "type": "module",
+  "bin": {
+    "skytells": "./bin/skytells.js"
+  },
+  "main": "./dist/index.js",
+  "files": [
+    "bin",
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "start": "node ./bin/skytells.js",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "skytells",
+    "cli",
+    "ai",
+    "inference",
+    "deployments"
+  ],
+  "author": "Skytells",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/skytells/cli"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@inquirer/prompts": "^8.3.2",
+    "chalk": "^5.6.2",
+    "cli-table3": "^0.6.5",
+    "commander": "^14.0.3",
+    "open": "^11.0.0",
+    "ora": "^9.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.2",
+    "tsup": "^8.5.1",
+    "typescript": "^6.0.2"
+  }
+}
