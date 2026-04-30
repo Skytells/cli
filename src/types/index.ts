@@ -87,8 +87,6 @@ export interface App {
   framework?: string;
   output_dir?: string;
   root_dir?: string;
-  dokploy_app_id?: string;
-  owner_id?: string;
   created_at: string;
   updated_at: string;
 }
@@ -273,4 +271,98 @@ export interface CognitionEvent {
 
 export interface CognitionTimeseries {
   [key: string]: unknown;
+}
+
+// ── Cloud Agents ──────────────────────────────────────────────
+
+export type AgentType = "review" | "execute" | "hybrid" | "custom";
+export type RunType = "review" | "execute" | "investigate";
+export type RunStatus =
+  | "queued"
+  | "running"
+  | "awaiting_approval"
+  | "approved"
+  | "completed"
+  | "failed"
+  | "cancelled";
+
+export interface PinnedPrompt {
+  id: string;
+  label: string;
+  content: string;
+  run_type?: RunType;
+}
+
+export interface Agent {
+  id: string;
+  user_id: string;
+  name: string;
+  description: string;
+  type: AgentType;
+  is_active: boolean;
+  is_system?: boolean;
+  capabilities: string[];
+  config: Record<string, unknown>;
+  pinned_prompts: PinnedPrompt[];
+  repo_binding: string[];
+  trigger_config: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AgentRun {
+  id: string;
+  run_type: RunType;
+  status: RunStatus;
+  trigger_source: string;
+  repo_full_name: string;
+  branch: string | null;
+  pr_number: number | null;
+  commit_sha: string | null;
+  result_summary: string | null;
+  tokens_input: number;
+  tokens_output: number;
+  error_code: string | null;
+  error_message: string | null;
+  created_at: string;
+  updated_at: string;
+  completed_at: string | null;
+}
+
+export interface AgentRunEnvelope {
+  data: AgentRun[];
+  meta: { page: number; total: number; per_page: number };
+}
+
+export interface AgentCreateRequest {
+  name: string;
+  description: string;
+  type: AgentType;
+  capabilities?: string[];
+  config?: Record<string, unknown>;
+  pinned_prompts?: PinnedPrompt[];
+  repo_binding?: string[];
+  trigger_config?: Record<string, unknown>;
+  is_active?: boolean;
+}
+
+export interface AgentUpdateRequest {
+  name?: string;
+  description?: string;
+  type?: AgentType;
+  capabilities?: string[];
+  config?: Record<string, unknown>;
+  pinned_prompts?: PinnedPrompt[];
+  repo_binding?: string[];
+  trigger_config?: Record<string, unknown>;
+  is_active?: boolean;
+}
+
+export interface AgentRunCreateRequest {
+  run_type: RunType;
+  repo_full_name: string;
+  branch?: string;
+  pr_number?: number;
+  prompt?: string;
+  instruction?: string;
 }

@@ -45,31 +45,73 @@ export class InsufficientScopeError extends CLIError {
   }
 }
 
+export class PaymentRequiredError extends CLIError {
+  constructor(description?: string) {
+    const msg = description
+      ? description
+      : "Account suspended or payment outstanding. Visit the Skytells console to resolve.";
+    super(msg, 1);
+    this.name = "PaymentRequiredError";
+  }
+}
+
+export class PlanLimitError extends CLIError {
+  constructor(description?: string) {
+    const msg = description
+      ? description
+      : "This feature is not available on your current plan. Upgrade to continue.";
+    super(msg, 1);
+    this.name = "PlanLimitError";
+  }
+}
+
+export class RateLimitError extends CLIError {
+  constructor(description?: string) {
+    const msg = description
+      ? description
+      : "Run limit reached. Upgrade your plan to increase your quota.";
+    super(msg, 1);
+    this.name = "RateLimitError";
+  }
+}
+
 export function handleApiError(
   status: number,
   body: Record<string, unknown>,
 ): never {
   const errorMsg =
-    (body.error as string) || `Request failed (${status}).`;
+    (body.error as string) ||
+    (body.message as string) ||
+    `Request failed (${status}).`;
+  const details = body.details as string | undefined;
   const limitType = body.limit_type as string | undefined;
+  const displayMsg = details ? `${errorMsg} ${details}` : errorMsg;
 
   switch (status) {
+    case 400:
+      throw new CLIError(displayMsg || "Bad request — check your input.");
     case 401:
       throw new AuthRequiredError();
+    case 402:
+      throw new PaymentRequiredError(displayMsg);
     case 403:
-      if (limitType) {
-        throw new CLIError(errorMsg);
+      if (limitType === "plan") {
+        throw new PlanLimitError(displayMsg);
       }
-      throw new InsufficientScopeError(errorMsg);
+      throw new InsufficientScopeError(displayMsg);
     case 404:
-      throw new CLIError(errorMsg || "Resource not found.");
+      throw new CLIError(displayMsg || "Resource not found.");
     case 409:
-      throw new CLIError(errorMsg || "Conflict — resource already exists.");
+      throw new CLIError(displayMsg || "Conflict — resource already exists or limit reached.");
+    case 422:
+      throw new CLIError(displayMsg || "Validation failed — check your input.");
+    case 429:
+      throw new RateLimitError(displayMsg);
     case 502:
-      throw new CLIError(errorMsg || "Upstream infrastructure error.");
+      throw new CLIError(displayMsg || "Upstream infrastructure error.");
     case 503:
-      throw new CLIError(errorMsg || "Service temporarily unavailable.");
+      throw new CLIError(displayMsg || "Service temporarily unavailable.");
     default:
-      throw new CLIError(errorMsg);
+      throw new CLIError(displayMsg);
   }
 }

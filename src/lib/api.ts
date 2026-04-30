@@ -67,9 +67,9 @@ async function request<T>(
 
   // Unwrap { data: ... } envelope if present
   if (json && typeof json === "object" && "data" in json) {
-    const result = json as { data: T; total?: number };
+    const result = json as { data: T; total?: number; meta?: unknown };
     // For paginated responses, return the full envelope
-    if ("total" in result) {
+    if ("total" in result || "meta" in result) {
       return json as T;
     }
     return result.data;
@@ -121,9 +121,10 @@ export function apiPatch<T>(
 
 export function apiDelete<T>(
   path: string,
+  body?: unknown,
   opts?: RequestOptions,
 ): Promise<T> {
-  return request<T>("DELETE", path, undefined, opts);
+  return request<T>("DELETE", path, body, opts);
 }
 
 // ── SSE streaming for logs ───────────────────────────────────

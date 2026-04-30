@@ -68,6 +68,15 @@ import { orchestratorInspectCommand } from "./commands/orchestrator/inspect.js";
 import { orchestratorMetricsCommand } from "./commands/orchestrator/metrics.js";
 import { orchestratorUsageCommand } from "./commands/orchestrator/usage.js";
 
+// ── Agents ───────────────────────────────────────────────────
+import { agentsListCommand } from "./commands/agents/list.js";
+import { agentCreateCommand } from "./commands/agents/create.js";
+import { agentViewCommand } from "./commands/agents/view.js";
+import { agentUpdateCommand } from "./commands/agents/update.js";
+import { agentDeleteCommand } from "./commands/agents/delete.js";
+import { agentReposCommand } from "./commands/agents/repos.js";
+import { agentRunsCommand } from "./commands/agents/runs.js";
+
 // ── Cognition ────────────────────────────────────────────────
 import { cognitionOverviewCommand } from "./commands/cognition/overview.js";
 import { cognitionErrorsCommand } from "./commands/cognition/errors.js";
@@ -84,7 +93,7 @@ const program = new Command();
 program
   .name("skytells")
   .description("Skytells CLI — manage projects, apps, databases, and cloud infrastructure")
-  .version("1.0.0", "-v, --version");
+  .version("1.0.1", "-v, --version");
 
 // ── Auth & identity ──────────────────────────────────────────
 program.addCommand(loginCommand);
@@ -180,6 +189,17 @@ orchestrator.addCommand(orchestratorInspectCommand);    // skytells orchestrator
 orchestrator.addCommand(orchestratorMetricsCommand);    // skytells orchestrator metrics
 orchestrator.addCommand(orchestratorUsageCommand);      // skytells orchestrator usage
 program.addCommand(orchestrator);
+
+// ── Agents ───────────────────────────────────────────────────
+const agents = new Command("agents").description("Manage Cloud Agents");
+agents.addCommand(agentsListCommand);       // skytells agents ls
+agents.addCommand(agentCreateCommand);      // skytells agents add
+agents.addCommand(agentViewCommand);        // skytells agents inspect <id>
+agents.addCommand(agentUpdateCommand);      // skytells agents set <id>
+agents.addCommand(agentDeleteCommand);      // skytells agents rm <id>
+agents.addCommand(agentReposCommand);       // skytells agents repos ...
+agents.addCommand(agentRunsCommand);        // skytells agents runs ...
+program.addCommand(agents);
 
 // ── Cognition ────────────────────────────────────────────────
 const cognition = new Command("cognition").description("Cognition observability and monitoring");
