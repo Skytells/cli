@@ -167,7 +167,7 @@ export SKYTELLS_CONFIG_DIR=/custom/path
 2. **Use environment variables in CI/CD** — Never store credentials in code or config files committed to version control
 3. **Request minimal scopes** — Only request the permissions your workflow needs
 4. **Rotate tokens regularly** — Generate new tokens periodically and revoke old ones
-5. **Keep the CLI updated** — `npm update -g @skytells/cli`
+5. **Keep the CLI updated** — `skytells update`
 
 ## Troubleshooting
 

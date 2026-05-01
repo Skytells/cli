@@ -1,6 +1,6 @@
 {
   "name": "@skytells/cli",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Skytells CLI — manage services, deployments, and inference from your terminal",
   "type": "module",
   "bin": {

@@ -1,6 +1,7 @@
 import { Command } from "commander";
 
 import { CLIError } from "./lib/errors.js";
+import { CLI_VERSION } from "./lib/package.js";
 import { error as showError } from "./lib/ui.js";
 
 // ── Auth ─────────────────────────────────────────────────────
@@ -8,6 +9,7 @@ import { loginCommand } from "./commands/auth/login.js";
 import { logoutCommand } from "./commands/auth/logout.js";
 import { whoamiCommand } from "./commands/whoami.js";
 import { linkCommand } from "./commands/link.js";
+import { updateCommand } from "./commands/update.js";
 
 // ── Projects (user-level) ────────────────────────────────────
 import { projectsListCommand } from "./commands/projects/list.js";
@@ -93,13 +95,14 @@ const program = new Command();
 program
   .name("skytells")
   .description("Skytells CLI — manage projects, apps, databases, and cloud infrastructure")
-  .version("1.0.1", "-v, --version");
+  .version(CLI_VERSION, "-v, --version");
 
 // ── Auth & identity ──────────────────────────────────────────
 program.addCommand(loginCommand);
 program.addCommand(logoutCommand);
 program.addCommand(whoamiCommand);
 program.addCommand(linkCommand);
+program.addCommand(updateCommand);
 
 // ── Projects (user-level) ────────────────────────────────────
 const projects = new Command("projects").description("Manage projects");

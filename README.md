@@ -70,7 +70,13 @@ Verify the installation:
 skytells --version
 ```
 
-You should see `1.0.0` printed to the terminal.
+You should see the installed CLI version printed to the terminal.
+
+Update to the latest npm release:
+
+```bash
+skytells update
+```
 
 ---
 

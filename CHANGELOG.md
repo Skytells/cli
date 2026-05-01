@@ -6,6 +6,17 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
+## [1.0.2] — 2026-05-01
+
+### Added
+
+#### CLI Updates
+- **`skytells update`** — Fetches the latest published Skytells CLI version from npm and updates the globally installed CLI package.
+- **`skytells update --check`** — Checks whether a newer npm version is available without installing it.
+
+
+---
+
 ## [1.0.1] — 2026-04-30
 
 ### Added
@@ -105,5 +116,6 @@ The first stable release of the Skytells CLI. A full-featured command-line inter
 - Colorized terminal output with tables and spinners
 - Environment variable overrides for all configuration
 
+[1.0.2]: https://github.com/skytells/cli/releases/tag/v1.0.2
 [1.0.1]: https://github.com/skytells/cli/releases/tag/v1.0.1
 [1.0.0]: https://github.com/skytells/cli/releases/tag/v1.0.0
