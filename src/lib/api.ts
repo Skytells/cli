@@ -1,8 +1,11 @@
+import { Readable } from "node:stream";
+import { FormDataEncoder } from "form-data-encoder";
+import type { FormData } from "formdata-node";
 import { API_BASE_URL, CLI_API_PREFIX } from "./constants.js";
 import { loadToken, loadAccessKey } from "./config.js";
 import { AuthRequiredError, AccessKeyRequiredError, handleApiError } from "./errors.js";
 
-type AuthMode = "user" | "project" | "none";
+type AuthMode = "user" | "project" | "either" | "none";
 
 interface RequestOptions {
   headers?: Record<string, string>;
@@ -21,36 +24,17 @@ function resolveAuth(mode: AuthMode): string | null {
       if (!key) throw new AccessKeyRequiredError();
       return key;
     }
+    case "either": {
+      const credential = loadAccessKey() ?? loadToken();
+      if (!credential) throw new AuthRequiredError();
+      return credential;
+    }
     case "none":
       return null;
   }
 }
 
-async function request<T>(
-  method: string,
-  path: string,
-  body?: unknown,
-  opts: RequestOptions = {},
-): Promise<T> {
-  const authMode = opts.auth ?? "project";
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-    ...opts.headers,
-  };
-
-  const bearer = resolveAuth(authMode);
-  if (bearer) {
-    headers["Authorization"] = `Bearer ${bearer}`;
-  }
-
-  const url = `${API_BASE_URL}${path}`;
-
-  const res = await fetch(url, {
-    method,
-    headers,
-    body: body ? JSON.stringify(body) : undefined,
-  });
-
+async function parseResponse<T>(res: Response): Promise<T> {
   if (!res.ok) {
     let errorBody: Record<string, unknown>;
     try {
@@ -78,6 +62,34 @@ async function request<T>(
   return json as T;
 }
 
+async function request<T>(
+  method: string,
+  path: string,
+  body?: unknown,
+  opts: RequestOptions = {},
+): Promise<T> {
+  const authMode = opts.auth ?? "project";
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+    ...opts.headers,
+  };
+
+  const bearer = resolveAuth(authMode);
+  if (bearer) {
+    headers["Authorization"] = `Bearer ${bearer}`;
+  }
+
+  const url = `${API_BASE_URL}${path}`;
+
+  const res = await fetch(url, {
+    method,
+    headers,
+    body: body ? JSON.stringify(body) : undefined,
+  });
+
+  return parseResponse<T>(res);
+}
+
 function buildQueryString(params?: Record<string, string | number | undefined>): string {
   if (!params) return "";
   const entries = Object.entries(params).filter(
@@ -101,6 +113,26 @@ export function apiPost<T>(
   opts?: RequestOptions,
 ): Promise<T> {
   return request<T>("POST", path, body, opts);
+}
+
+export async function apiPostFormData<T>(
+  path: string,
+  body: FormData,
+): Promise<T> {
+  const bearer = resolveAuth("either");
+  const encoder = new FormDataEncoder(body);
+  const requestInit: RequestInit & { duplex: "half" } = {
+    method: "POST",
+    headers: {
+      ...encoder.headers,
+      Authorization: `Bearer ${bearer}`,
+    },
+    body: Readable.from(encoder) as unknown as BodyInit,
+    duplex: "half",
+  };
+  const res = await fetch(`${API_BASE_URL}${path}`, requestInit);
+
+  return parseResponse<T>(res);
 }
 
 export function apiPut<T>(

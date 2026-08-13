@@ -39,6 +39,9 @@
   - [Projects](#projects)
   - [Apps](#apps)
   - [Deployments](#deployments)
+  - [Drops](#drops)
+  - [Models](#models)
+  - [Predictions](#predictions)
   - [Databases](#databases)
   - [Environment Variables](#environment-variables)
   - [Domains](#domains)
@@ -63,6 +66,8 @@ Install the Skytells CLI globally using npm:
 ```bash
 npm install -g @skytells/cli
 ```
+
+Current release: **1.0.3**.
 
 Verify the installation:
 
@@ -156,6 +161,14 @@ skytells link <access-key>
 
 Access keys use the format `sk_proj_*` and can be generated in your project settings at [console.skytells.ai](https://console.skytells.ai).
 
+### Skytells API Keys (Models and Predictions)
+
+The Models and Predictions APIs use a separate Skytells API key. On first use, the CLI prompts for the key, validates it, and stores it securely. Create a key at [console.skytells.ai/settings/api-keys](https://console.skytells.ai/settings/api-keys).
+
+```bash
+skytells api-key set
+```
+
 ---
 
 ## Commands
@@ -225,6 +238,18 @@ skytells link sk_proj_abc123...
 | Argument | Description |
 |----------|-------------|
 | `access-key` | A project-scoped access key (starts with `sk_proj_`) |
+
+#### `skytells api-key set`
+
+Authenticate or replace the API key used for Models and Predictions. The prompt masks the key and validates it before saving.
+
+```bash
+skytells api-key set
+skytells api-key status
+skytells api-key rm
+```
+
+`skytells api-key update` is an alias for `set`. The `rm` command also accepts `remove` and `delete`, plus `--force` to skip confirmation.
 
 ---
 
@@ -471,6 +496,113 @@ skytells deployments ls --json
 | `--limit <n>` | Maximum number of results to return |
 | `--offset <n>` | Number of results to skip |
 | `--json` | Output as JSON |
+
+---
+
+### Drops
+
+#### `skytells drops deploy <zip>`
+
+Upload a ZIP archive and deploy it as a static Drop.
+
+```bash
+skytells drops deploy ./dist/site.zip \
+  --project 550e8400-e29b-41d4-a716-446655440000 \
+  --slug product-docs
+
+# Deploy a directory inside the archive and return JSON
+skytells drops deploy ./dist/site.zip \
+  --project 550e8400-e29b-41d4-a716-446655440000 \
+  --slug product-docs \
+  --build-path dist \
+  --name "Product Docs" \
+  --json
+```
+
+| Argument | Description |
+|----------|-------------|
+| `zip` | Path to a ZIP archive whose filename ends in `.zip` |
+
+| Option | Description |
+|--------|-------------|
+| `--project <uuid>` | Project UUID (required) |
+| `--slug <slug>` | Unique 2-63 character Drop slug (required) |
+| `--build-path <path>` | Build path inside the archive; defaults to the archive root |
+| `--upload-id <uuid>` | Correlation UUID; generated automatically when omitted |
+| `--name <name>` | Display name, up to 100 characters |
+| `--json` | Output as JSON |
+
+The resulting site is available at `https://<slug>.drops.skytells.app`. See the [Drops guide](docs/drops.md) for authentication, plan limits, and CI usage.
+
+---
+
+### Models
+
+#### `skytells models ls`
+
+List models available to your Skytells API key.
+
+```bash
+skytells models ls
+skytells models ls --type image
+skytells models ls --json
+```
+
+#### `skytells models inspect <slug>`
+
+Show model metadata, pricing, capabilities, and optional input/output JSON Schemas.
+
+```bash
+skytells models inspect truefusion
+skytells models inspect truefusion --schemas --json
+```
+
+### Predictions
+
+#### `skytells predictions create <model>`
+
+Generate an image, video, or audio asset using a model namespace from `skytells models ls`.
+
+```bash
+# Prompt shortcut
+skytells predictions create truefusion \
+  --prompt "A portrait of an astronaut in a garden" \
+  --wait
+
+# Model-specific JSON input and immediate asset download
+skytells predictions create truefusion \
+  --input '{"prompt":"A lighthouse at dusk","aspect_ratio":"16:9"}' \
+  --output ./generated
+
+# Load complex input from a file
+skytells predictions create beatfusion-2.0 \
+  --input @audio-input.json \
+  --wait \
+  --json
+```
+
+| Option | Description |
+|--------|-------------|
+| `--input <json-or-file>` | Model-specific JSON object or `@path/to/input.json` |
+| `--prompt <text>` | Shortcut for an input containing only `prompt` |
+| `--webhook <url>` | Webhook URL for prediction events |
+| `--wait` | Poll until the prediction reaches a terminal state |
+| `--timeout <seconds>` | Maximum wait time; defaults to 900 seconds |
+| `--output <directory>` | Wait and download generated assets immediately |
+| `--json` | Output as JSON |
+
+Provide exactly one of `--input` or `--prompt`. Use `skytells models inspect <slug> --schemas` to discover each model's accepted input fields.
+
+#### Manage predictions
+
+```bash
+skytells predictions ls
+skytells predictions get <id>
+skytells predictions cancel <id>
+skytells predictions rm <id>
+```
+
+Generated output URLs expire five minutes after completion. Use `--output <directory>` when creating a prediction to wait for completion and download the files immediately. See the [Predictions guide](docs/predictions.md) for filters, JSON inputs, CI usage, and lifecycle details.
 
 ---
 
@@ -1162,6 +1294,8 @@ export SKYTELLS_CONFIG_DIR=/path/to/config
 | `SKYTELLS_API_URL` | Override the API base URL |
 | `SKYTELLS_TOKEN` | Override the stored authentication token |
 | `SKYTELLS_ACCESS_KEY` | Override the stored project access key |
+| `SKYTELLS_API_KEY` | API key for Models and Predictions |
+| `SKYTELLS_AI_API_URL` | Override the Models and Predictions API base URL |
 | `SKYTELLS_CONFIG_DIR` | Override the config directory path |
 
 ---

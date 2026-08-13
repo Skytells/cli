@@ -25,6 +25,13 @@ export class AccessKeyRequiredError extends CLIError {
   }
 }
 
+export class ApiKeyRequiredError extends CLIError {
+  constructor() {
+    super("No Skytells API key configured. Run 'skytells api-key set' or set SKYTELLS_API_KEY.", 1);
+    this.name = "ApiKeyRequiredError";
+  }
+}
+
 export class TokenExpiredError extends CLIError {
   constructor() {
     super(
@@ -85,6 +92,7 @@ export function handleApiError(
     `Request failed (${status}).`;
   const details = body.details as string | undefined;
   const limitType = body.limit_type as string | undefined;
+  const code = body.code as string | undefined;
   const displayMsg = details ? `${errorMsg} ${details}` : errorMsg;
 
   switch (status) {
@@ -95,6 +103,9 @@ export function handleApiError(
     case 402:
       throw new PaymentRequiredError(displayMsg);
     case 403:
+      if (code === "security_violation") {
+        throw new CLIError(displayMsg);
+      }
       if (limitType === "plan") {
         throw new PlanLimitError(displayMsg);
       }

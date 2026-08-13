@@ -10,6 +10,11 @@ import { logoutCommand } from "./commands/auth/logout.js";
 import { whoamiCommand } from "./commands/whoami.js";
 import { linkCommand } from "./commands/link.js";
 import { updateCommand } from "./commands/update.js";
+import { apiKeyCommand } from "./commands/api-key.js";
+
+// ── AI Models & Predictions ─────────────────────────────────
+import { modelsCommand } from "./commands/models.js";
+import { predictionsCommand } from "./commands/predictions.js";
 
 // ── Projects (user-level) ────────────────────────────────────
 import { projectsListCommand } from "./commands/projects/list.js";
@@ -30,6 +35,9 @@ import { startCommand, stopCommand, restartCommand, redeployCommand } from "./co
 // ── Deploy & Deployments ─────────────────────────────────────
 import { deployCommand } from "./commands/deploy.js";
 import { deploymentsListCommand } from "./commands/deployments/list.js";
+
+// ── Drops ───────────────────────────────────────────────────
+import { dropDeployCommand } from "./commands/drops/deploy.js";
 
 // ── Databases ────────────────────────────────────────────────
 import { databasesListCommand } from "./commands/databases/list.js";
@@ -103,6 +111,11 @@ program.addCommand(logoutCommand);
 program.addCommand(whoamiCommand);
 program.addCommand(linkCommand);
 program.addCommand(updateCommand);
+program.addCommand(apiKeyCommand);
+
+// ── AI Models & Predictions ─────────────────────────────────
+program.addCommand(modelsCommand);
+program.addCommand(predictionsCommand);
 
 // ── Projects (user-level) ────────────────────────────────────
 const projects = new Command("projects").description("Manage projects");
@@ -134,6 +147,11 @@ program.addCommand(deployCommand);          // skytells deploy <app>
 const deployments = new Command("deployments").description("Manage deployments");
 deployments.addCommand(deploymentsListCommand); // skytells deployments ls
 program.addCommand(deployments);
+
+// ── Drops ───────────────────────────────────────────────────
+const drops = new Command("drops").description("Deploy static sites as Drops");
+drops.addCommand(dropDeployCommand);        // skytells drops deploy <zip>
+program.addCommand(drops);
 
 // ── Databases ────────────────────────────────────────────────
 const databases = new Command("databases").description("Manage databases");

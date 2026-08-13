@@ -3,6 +3,9 @@ export const API_BASE_URL =
 
 export const CLI_API_PREFIX = "/api/v1/cli";
 
+export const AI_API_BASE_URL =
+  process.env.SKYTELLS_AI_API_URL || "https://api.skytells.ai/v1";
+
 export const TOKEN_PREFIX = "sk_pat_";
 export const TOKEN_LENGTH = 71;
 export const TOKEN_DISPLAY_PREFIX_LENGTH = 11;

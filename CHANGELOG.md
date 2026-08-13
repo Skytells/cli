@@ -6,6 +6,15 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
+## [1.0.3] — 2026-08-13
+
+### Added
+
+- **`skytells drops deploy <zip>`** — Stream a ZIP archive to Skytells and deploy it as a static Drop, with build-path, display-name, upload-correlation, and JSON output options.
+- **`skytells api-key set/status/rm`** — Securely configure, inspect, update, or remove the API key used by the Models and Predictions APIs.
+- **`skytells models ls/inspect`** — Discover available models, pricing, capabilities, and model-specific JSON Schemas.
+- **`skytells predictions create/get/ls/cancel/rm`** — Generate and manage image, video, and audio predictions, with polling and immediate output downloads.
+
 ## [1.0.2] — 2026-05-01
 
 ### Added
@@ -116,6 +125,7 @@ The first stable release of the Skytells CLI. A full-featured command-line inter
 - Colorized terminal output with tables and spinners
 - Environment variable overrides for all configuration
 
+[1.0.3]: https://github.com/skytells/cli/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/skytells/cli/releases/tag/v1.0.2
 [1.0.1]: https://github.com/skytells/cli/releases/tag/v1.0.1
 [1.0.0]: https://github.com/skytells/cli/releases/tag/v1.0.0

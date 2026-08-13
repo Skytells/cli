@@ -25,7 +25,7 @@ Verify the installation by checking the version:
 
 ```bash
 skytells --version
-# Output: 1.0.0
+# Output: 1.0.3
 ```
 
 View all available commands:
@@ -112,6 +112,15 @@ skytells deploy <app-id>
 skytells logs <app-id> --follow
 ```
 
+### Generate an Image, Video, or Audio Asset
+
+```bash
+skytells models ls
+skytells predictions create <model> --prompt "Your prompt" --output ./generated
+```
+
+The first Models or Predictions command prompts for a Skytells API key. Create one at [console.skytells.ai/settings/api-keys](https://console.skytells.ai/settings/api-keys).
+
 ## Step 4: Use JSON Output
 
 Every command supports `--json` for machine-readable output. This is useful for scripting and CI/CD pipelines:
@@ -128,4 +137,6 @@ skytells status --json
 - [Projects](projects.md) — Create and manage projects
 - [Apps](apps.md) — Deploy and manage applications
 - [Deployments](deployments.md) — Understand the deployment workflow
+- [Drops](drops.md) — Deploy a static site from a ZIP archive
+- [Predictions](predictions.md) — Generate image, video, and audio assets
 - [Logs & Status](logs-and-status.md) — Monitor your applications in real time

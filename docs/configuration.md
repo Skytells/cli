@@ -10,7 +10,9 @@ The following environment variables can be used to configure the CLI behavior:
 |----------|-------------|---------|
 | `SKYTELLS_TOKEN` | Personal access token for authentication | — |
 | `SKYTELLS_ACCESS_KEY` | Project-scoped access key | — |
+| `SKYTELLS_API_KEY` | API key for Models and Predictions | — |
 | `SKYTELLS_API_URL` | Override the API base URL | `https://console.skytells.ai` |
+| `SKYTELLS_AI_API_URL` | Override the Models and Predictions API base URL | `https://api.skytells.ai/v1` |
 | `SKYTELLS_CONFIG_DIR` | Custom path for configuration files | `~/.config/skytells` |
 
 Environment variables take precedence over stored credentials.
@@ -24,12 +26,14 @@ Set these variables in your CI/CD pipeline to avoid interactive authentication:
 env:
   SKYTELLS_TOKEN: ${{ secrets.SKYTELLS_TOKEN }}
   SKYTELLS_ACCESS_KEY: ${{ secrets.SKYTELLS_ACCESS_KEY }}
+  SKYTELLS_API_KEY: ${{ secrets.SKYTELLS_API_KEY }}
 ```
 
 ```bash
 # Shell example
 export SKYTELLS_TOKEN=sk_pat_your_token_here
 export SKYTELLS_ACCESS_KEY=sk_proj_your_key_here
+export SKYTELLS_API_KEY=your_skytells_api_key
 
 skytells deploy my-app
 ```
@@ -62,7 +66,8 @@ The credentials file contains:
 {
   "token": "sk_pat_...",
   "access_key": "sk_proj_...",
-  "created_at": "2026-04-13T10:30:00.000Z"
+  "api_key": "...",
+  "created_at": 1776076200000
 }
 ```
 
@@ -72,6 +77,7 @@ The credentials file contains:
 - The file is automatically excluded by most `.gitignore` templates
 - In CI/CD environments, use environment variables instead of file-based credentials
 - Rotate tokens regularly at [console.skytells.ai/settings/tokens](https://console.skytells.ai/settings/tokens)
+- Rotate Skytells API keys at [console.skytells.ai/settings/api-keys](https://console.skytells.ai/settings/api-keys)
 
 ## JSON Output
 
@@ -97,5 +103,5 @@ APP_STATUS=$(skytells status --json | jq -r '.apps[0].status')
 When multiple configuration sources are available, the CLI uses this precedence order (highest to lowest):
 
 1. **Command-line flags** — `--token`, `--scopes`, etc.
-2. **Environment variables** — `SKYTELLS_TOKEN`, `SKYTELLS_ACCESS_KEY`
+2. **Environment variables** — `SKYTELLS_TOKEN`, `SKYTELLS_ACCESS_KEY`, `SKYTELLS_API_KEY`
 3. **Stored credentials** — `~/.config/skytells/credentials.json`

@@ -86,7 +86,9 @@ Access keys scope CLI operations to a specific project. They use the format `sk_
 skytells link sk_proj_your_access_key
 ```
 
-This stores the access key alongside your user token. Commands that operate on a project (apps, databases, deployments, etc.) will use this key.
+This stores the access key alongside your user token. Commands that operate on a project (apps, databases, deployments, Drops, etc.) will use this key.
+
+Deploying a Drop requires an access key with both the `deploy` and `settings` scopes, or the `admin` scope. When both an access key and user token are configured, `skytells drops deploy` uses the access key.
 
 ### Where to Find Access Keys
 
@@ -96,6 +98,25 @@ Access keys are available in your project settings:
 2. Select your project
 3. Navigate to **Settings**
 4. Copy the access key
+
+## Skytells API Keys
+
+Models and Predictions use a Skytells API key sent to `https://api.skytells.ai/v1` through the `x-api-key` header. This credential is separate from personal access tokens and project access keys.
+
+```bash
+# Add or replace the stored key
+skytells api-key set
+
+# Check the active source without revealing the key
+skytells api-key status
+
+# Delete the stored key
+skytells api-key rm
+```
+
+The CLI masks the key while you enter it and validates it against the Models API before saving. If no key is configured, the first `skytells models` or `skytells predictions` command starts the same prompt automatically.
+
+Create and rotate keys at [console.skytells.ai/settings/api-keys](https://console.skytells.ai/settings/api-keys). For CI, set `SKYTELLS_API_KEY`; environment credentials take precedence and cannot be removed by `skytells api-key rm`.
 
 ## Token Scopes
 

@@ -48,6 +48,7 @@ export interface ApiError {
 export interface Credentials {
   token?: string;
   access_key?: string;
+  api_key?: string;
   created_at: number;
 }
 
@@ -106,6 +107,14 @@ export interface Deployment {
   build_duration_ms?: number;
   created_at: string;
   updated_at?: string;
+}
+
+export interface DropDeployment {
+  drop_id: string;
+  drop_slug: string;
+  domain_url: string;
+  deployment_id: string;
+  status: string;
 }
 
 // ── Databases ────────────────────────────────────────────────
@@ -190,11 +199,21 @@ export interface DeleteResponse {
 export interface Prediction {
   id: string;
   status: string;
-  model?: Record<string, unknown>;
+  stream?: boolean;
+  type?: string;
+  model?: string | { name: string; type?: string };
   input?: Record<string, unknown>;
-  output?: unknown;
-  error?: string;
+  output?: string[] | string | null;
+  error?: string | null;
+  privacy?: string;
+  source?: string;
+  webhook?: { url?: string | null; events?: string[] };
+  metrics?: Record<string, number>;
+  metadata?: Record<string, unknown>;
+  urls?: Record<string, string>;
   created_at?: string;
+  started_at?: string;
+  completed_at?: string;
   updated_at?: string;
   [key: string]: unknown;
 }
@@ -202,7 +221,35 @@ export interface Prediction {
 export interface PredictionCreateRequest {
   model: string;
   input: Record<string, unknown>;
-  api_key?: string;
+  webhook?: string;
+}
+
+export interface Model {
+  name: string;
+  description?: string;
+  namespace: string;
+  type: string;
+  privacy?: string;
+  img_url?: string | null;
+  vendor?: {
+    name?: string;
+    verified?: boolean;
+    slug?: string;
+    [key: string]: unknown;
+  };
+  billable?: boolean;
+  pricing?: {
+    amount?: number;
+    currency?: string;
+    unit?: string;
+    [key: string]: unknown;
+  };
+  capabilities?: string[];
+  metadata?: Record<string, unknown>;
+  status: string;
+  input_schema?: Record<string, unknown>;
+  output_schema?: Record<string, unknown>;
+  [key: string]: unknown;
 }
 
 // ── Orchestrator ─────────────────────────────────────────────
